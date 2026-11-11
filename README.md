@@ -2,11 +2,18 @@
 
 Minijuegos para dos en un mismo celular o tablet. Sin anuncios, sin internet, sin cuentas.
 
-**Para peques (3 años, cooperativos):** Burbujas · Busca el animal · Busca el color · Busca la fruta · Cuenta conmigo · Pintar juntos · Piano · Memoria (nivel Peque).
+**Aprender juntos (nadie pierde):** Busca el animal · Busca el color · Formas · Sombras · Grande y pequeño · ¿Qué come? · ¿De qué color es? · Busca la fruta · Cuenta conmigo · Alimenta al dino · Vocales · Emociones · Camino.
 
-**Atrapa y gana:** Hipopótamos hambrientos · Atrapa topos · Atrapa estrellas · Pesca.
+**Jugar juntos:** Burbujas · Globos de colores · Pintar juntos · Piano.
 
-**Retos papá vs hija:** Tira y afloja · Reflejos · Pong · Duelo de mates · Triqui · Piedra, papel o tijera.
+**De suerte (cualquiera gana):** Carrera de dados · Escondite · Memoria.
+
+**Atrapa y gana:** Hipopótamos hambrientos · Atrapa topos · Atrapa estrellas · Pesca · Tira y afloja.
+
+**Para cuando crezca:** Reflejos · Pong · Duelo de mates · Triqui · Piedra, papel o tijera.
+
+Nivel "Peque": 3 opciones por pregunta, contar hasta 3 y memoria de 8 cartas.
+Para salir de un juego se mantiene presionada la ✕.
 
 El jugador de abajo es el 1 (azul) y el de arriba el 2 (rosa, pantalla girada hacia él).
 El marcador y los nombres se guardan en el dispositivo.
