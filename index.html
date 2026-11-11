@@ -109,6 +109,30 @@ body.side #over .msg.flip,body.side #cd .num.flip{display:none}
 body:not(.side) .mid.toP1{transform:rotate(180deg)}
 /* Con hijo: el niño es azul y papá verde */
 body.hijo{--p0:#46c97b;--p1:#4aa8ff;--b0:#174a33;--b1:#16345c;--l0:#1f5a3c;--l1:#1e3f6e}
+.track{position:relative;width:92%;height:74px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.14) 0 22px,transparent 22px 44px);border-radius:37px}
+.runner{position:absolute;left:0;top:50%;transform:translateY(-50%) scaleX(-1);font-size:54px;line-height:1;transition:left .12s}
+.flag{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:40px}
+.bwrap{height:min(24dvh,190px);display:flex;align-items:center;justify-content:center}
+.balloon{width:min(22dvh,170px);aspect-ratio:.85;border-radius:50% 50% 50% 50%/45% 45% 55% 55%;transition:transform .08s;box-shadow:inset -14px -18px 0 rgba(0,0,0,.18);background-image:radial-gradient(circle at 30% 26%,rgba(255,255,255,.7) 0 8%,transparent 9%)!important}
+.balloon.boom{animation:boom .3s forwards}
+@keyframes boom{0%{transform:scale(1.25)}100%{transform:scale(1.9);opacity:0}}
+.popg{display:grid;gap:10px;width:min(80vw,300px)}
+.pp{aspect-ratio:1;border-radius:50%;background:var(--c);padding:0;box-shadow:inset 0 -8px 0 rgba(0,0,0,.25),0 4px 0 rgba(0,0,0,.25);transition:transform .08s}
+.pp.in{box-shadow:inset 0 8px 10px rgba(0,0,0,.4);filter:brightness(.8);transform:scale(.9)}
+.who.abs{position:absolute;top:8px;left:0;right:0;z-index:2}
+.rain{position:absolute;inset:0;pointer-events:none}
+.drop{position:absolute;left:0;top:0;font-size:44px;line-height:1}
+.basket{position:absolute;bottom:6px;line-height:1;text-align:center;pointer-events:none}
+.basket.yum,.box.yum{animation:bounce .3s}
+.reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(62vw,40dvh);background:radial-gradient(#fff6d5,#ffd36b)}
+.reveal.show{animation:bounce .7s}
+.field.sortf{background:#24305e}
+.boxes{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;gap:10px;justify-content:center;padding:0 44px}
+.box{flex:1;max-width:110px;height:92px;border-radius:18px;border:4px dashed rgba(255,255,255,.85)}
+.sitem{position:absolute;font-size:54px;line-height:1;touch-action:none;cursor:grab;transition:transform .15s}
+.sitem.drag{transform:scale(1.3);z-index:5;transition:none}
+.sitem.in{transform:scale(0);transition:transform .25s}
+.sitem.goback{transition:left .3s,top .3s}
 .foot{opacity:.45;font-size:12px;text-align:center}
 
 /* ---------- Juego ---------- */
@@ -1107,6 +1131,205 @@ function escondite(G){
   round();
 }
 
+/* ======================= AL MISMO TIEMPO (los dos juegan a la vez) ======================= */
+/* Carrera: cada uno toca su mitad para que su animal llegue a la meta */
+function carrera(G){
+  const h=G.split(),pos=[0,0],A=['🐢','🐇'];let live=false;
+  h.forEach((d,i)=>{
+    d.innerHTML=`<div class="who">${esc(G.name(i))}</div><div class="track"><span class="flag">🏁</span><span class="runner">${A[i]}</span></div><div class="big">¡TOCA rápido!</div>`;
+    const r=d.querySelector('.runner');
+    d.addEventListener('pointerdown',e=>{
+      e.preventDefault();if(!live||G.over)return;
+      pos[i]=Math.min(100,pos[i]+(i===0&&S.edge?2:4));r.style.left=(pos[i]*.82)+'%';sfx.tap();
+      if(pos[i]>=100){live=false;G.end(i)}
+    });
+  });
+  G.countdown(()=>live=true);
+}
+
+/* Infla el globo: el primero en reventar el suyo gana la ronda (3 rondas) */
+function globo(G){
+  const h=G.split(),sc=[0,0],n=[0,0],T=3;let live=false;
+  const need=i=>i===0&&S.edge?24:14;
+  const draw=()=>h.forEach((d,i)=>{
+    d.querySelector('.who').textContent=`${G.name(i)} ${'⭐'.repeat(sc[i])+'☆'.repeat(T-sc[i])}`;
+    d.querySelector('.balloon').style.transform=`scale(${.35+.85*n[i]/need(i)})`;
+  });
+  h.forEach((d,i)=>{
+    d.innerHTML=`<div class="who"></div><div class="bwrap"><div class="balloon" style="background:var(--p${i})"></div></div><div class="big">¡Toca para inflar!</div>`;
+    d.addEventListener('pointerdown',e=>{
+      e.preventDefault();if(!live||G.over)return;
+      n[i]++;beep(180+n[i]*30,.06,'sine',.1);
+      if(n[i]>=need(i)){
+        live=false;sc[i]++;beep(90,.35,'sawtooth',.2);sfx.ok();
+        d.querySelector('.balloon').classList.add('boom');
+        draw();d.querySelector('.balloon').style.transform='';
+        if(sc[i]>=T){G.after(()=>G.end(i),900);return}
+        G.after(()=>{n[0]=n[1]=0;h.forEach(x=>x.querySelector('.balloon').classList.remove('boom'));draw();live=true},1600);
+        return;
+      }
+      draw();
+    });
+  });
+  draw();G.countdown(()=>live=true);
+}
+
+/* Pop-it: el primero en apretar todas sus burbujas gana */
+function popit(G){
+  const h=G.split(),RC=['#ff5c5c','#ffa94d','#ffe066','#69db7c','#4dabf7','#b197fc'];
+  const left=[0,0];let live=false;
+  h.forEach((d,i)=>{
+    const N=i===0&&S.edge?20:12,cols=N>12?5:4;left[i]=N;
+    d.innerHTML=`<div class="who"></div><div class="popg" style="grid-template-columns:repeat(${cols},1fr)">${Array.from({length:N},(_,k)=>`<button class="pp" style="--c:${RC[Math.floor(k/cols)%6]}"></button>`).join('')}</div>`;
+    const who=d.querySelector('.who'),hd=()=>who.textContent=`${G.name(i)} · faltan ${left[i]}`;hd();
+    d.querySelectorAll('.pp').forEach(b=>b.addEventListener('pointerdown',e=>{
+      e.preventDefault();if(!live||G.over||b.classList.contains('in'))return;
+      b.classList.add('in');left[i]--;beep(260+rnd(0,240),.05,'triangle',.18);hd();
+      if(left[i]<=0)G.end(i);
+    }));
+  });
+  G.countdown(()=>live=true);
+}
+
+/* Lluvia de frutas: cada uno mueve su canasta y atrapa las que caen en su lado */
+function lluvia(G){
+  const h=G.split(),sc=[0,0],T=10,F=['🍎','🍌','🍓','🍊','🍇','🍉','🍐','🍒'];
+  let live=false,last=performance.now();
+  const P=h.map((d,i)=>{
+    d.innerHTML='<div class="who abs"></div><div class="rain"></div><div class="basket">🧺</div>';
+    const bw=i===0&&S.edge?66:(i===1&&S.edge?130:100);
+    const p={d,rain:d.querySelector('.rain'),bk:d.querySelector('.basket'),who:d.querySelector('.who'),bx:d.clientWidth/2,bw,items:[],next:0};
+    p.bk.style.width=bw+'px';p.bk.style.fontSize=Math.round(bw*.62)+'px';
+    const mv=e=>{
+      const r=d.getBoundingClientRect(),rot=getComputedStyle(d).transform!=='none';
+      p.bx=clamp(rot?r.right-e.clientX:e.clientX-r.left,bw/2,r.width-bw/2);
+    };
+    d.addEventListener('pointerdown',e=>{e.preventDefault();try{d.setPointerCapture(e.pointerId)}catch(_){}mv(e)});
+    d.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')mv(e)});
+    return p;
+  });
+  const hud=()=>P.forEach((p,i)=>p.who.textContent=`${G.name(i)} · ${sc[i]} / ${T} 🧺`);
+  G.loop(t=>{
+    const dt=Math.min((t-last)/1000,.05);last=t;
+    P.forEach((p,i)=>{
+      const Wd=p.d.clientWidth,Hd=p.d.clientHeight;
+      p.bk.style.left=(p.bx-p.bw/2)+'px';
+      if(!live||G.over)return;
+      if(t>p.next){
+        p.next=t+rnd(800,1250);
+        const el=document.createElement('span');el.className='drop';el.textContent=F[rnd(0,F.length-1)];p.rain.append(el);
+        p.items.push({el,x:rnd(30,Wd-30),y:-46,v:rnd(105,160)});
+      }
+      for(let k=p.items.length-1;k>=0;k--){
+        const it=p.items[k];it.y+=it.v*dt;it.el.style.transform=`translate(${it.x-22}px,${it.y}px)`;
+        if(it.y>=Hd-112&&it.y<=Hd-60&&Math.abs(it.x-p.bx)<p.bw/2+10){
+          it.el.remove();p.items.splice(k,1);sc[i]++;sfx.ok();hud();
+          p.bk.classList.remove('yum');void p.bk.offsetWidth;p.bk.classList.add('yum');
+          if(sc[i]>=T){live=false;G.end(i)}
+        }else if(it.y>Hd){it.el.remove();p.items.splice(k,1)}
+      }
+    });
+  });
+  hud();G.countdown(()=>{live=true;P.forEach(p=>p.next=0)});
+}
+
+/* Raspa y descubre (equipo): limpien el barro y aparece un animal */
+function raspa(G){
+  const root=G.root,pic=document.createElement('div');pic.className='reveal';root.append(pic);
+  const cv=document.createElement('canvas');root.append(cv);
+  const dpr=Math.min(window.devicePixelRatio||1,2),W=root.clientWidth,H=root.clientHeight;
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block';
+  const c=cv.getContext('2d');c.scale(dpr,dpr);
+  const c1=document.createElement('div'),c0=document.createElement('div');
+  c1.className='cnt flip ctop';c0.className='cnt cbot';root.append(c1,c0);
+  const T=5,CX=12,CY=24,RAD=34;
+  const PICS=shuffle([['🦁','un león','¿Cómo ruge el león?'],['🐘','un elefante','¿Cómo hace el elefante?'],['🐸','una rana','¿Cómo salta la rana?'],['🦒','una jirafa','¿Tiene el cuello largo o corto?'],['🐧','un pingüino','¿Cómo camina el pingüino?'],['🐙','un pulpo','¿Cuántos brazos tiene?'],['🦕','un dinosaurio','¿Cómo hace el dinosaurio?'],['🐒','un mono','¿Cómo hace el mono?']]);
+  let st=0,cells=new Set(),open=false,cur,rubs=0;
+  const upd=hint=>{const s='⭐'.repeat(st)+'☆'.repeat(T-st);c1.textContent=s;c0.innerHTML=`${s}<div class="hint">📢 ${hint}</div>`};
+  function setup(){
+    cur=PICS[st%PICS.length];pic.textContent=cur[0];pic.classList.remove('show');
+    c.globalCompositeOperation='source-over';c.fillStyle='#7a5230';c.fillRect(0,0,W,H);
+    for(let k=0;k<170;k++){c.fillStyle=`rgba(${rnd(60,140)},${rnd(35,90)},${rnd(15,45)},.6)`;c.beginPath();c.arc(rnd(0,W),rnd(0,H),rnd(6,26),0,7);c.fill()}
+    cells=new Set();open=true;
+    upd('Limpien el barro frotando con el dedo, ¡los dos a la vez! ¿Qué animal se esconde?');
+  }
+  function rub(x,y){
+    if(!open)return;
+    c.globalCompositeOperation='destination-out';c.beginPath();c.arc(x,y,RAD,0,7);c.fill();
+    for(let dx=-RAD;dx<=RAD;dx+=10)for(let dy=-RAD;dy<=RAD;dy+=10){
+      if(dx*dx+dy*dy>RAD*RAD)continue;
+      const gx=Math.floor((x+dx)/W*CX),gy=Math.floor((y+dy)/H*CY);
+      if(gx>=0&&gy>=0&&gx<CX&&gy<CY)cells.add(gy*CX+gx);
+    }
+    if(++rubs%6===0)beep(rnd(140,220),.04,'triangle',.05);
+    if(cells.size>=CX*CY*.6)reveal();
+  }
+  function reveal(){
+    open=false;c.globalCompositeOperation='source-over';c.clearRect(0,0,W,H);
+    pic.classList.add('show');st++;sfx.ok();upd(`¡Es ${cur[1]}! ${cur[2]}`);
+    if(st>=T)G.after(()=>G.end('coop'),2400);else G.after(setup,3400);
+  }
+  const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]},lp=new Map();
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();const p=pos(e);lp.set(e.pointerId,p);rub(p[0],p[1]);try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+  cv.addEventListener('pointermove',e=>{
+    const a=lp.get(e.pointerId);if(!a)return;const b=pos(e),n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/14));
+    for(let k=1;k<=n;k++)rub(a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n);
+    lp.set(e.pointerId,b);
+  });
+  const up=e=>lp.delete(e.pointerId);cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  setup();
+}
+
+/* Ordena los colores (equipo): arrastren cada cosa a la caja de su color */
+function ordena(G){
+  const root=G.root,field=document.createElement('div');field.className='field sortf';root.append(field);
+  const COLS=[['#e53935','ROJO',['🍎','🍓','🚒','🌶️','❤️','🍅']],['#1e88e5','AZUL',['🐳','🫐','💙','🧢','🦋','💎']],['#fdd835','AMARILLO',['🍌','🌻','⭐','🐤','🍋','🧀']]];
+  const boxes=document.createElement('div');boxes.className='boxes';field.append(boxes);
+  const bx=COLS.map(([col])=>{const b=document.createElement('div');b.className='box';b.style.background=col;boxes.append(b);return b});
+  const c1=document.createElement('div'),c0=document.createElement('div');
+  c1.className='cnt flip ctop';c0.className='cnt cbot';root.append(c1,c0);
+  const N=S.level===0?3:4,total=N*3;let done=0;
+  const upd=()=>{const s=`🧺 ${done} / ${total}`;c1.textContent=s;c0.innerHTML=`${s}<div class="hint">📢 Arrastren cada cosa a la caja de su color, ¡los dos al tiempo!</div>`};upd();
+  const W=root.clientWidth,H=root.clientHeight;
+  const spots=[];
+  COLS.forEach((cc,ci)=>shuffle(cc[2].slice()).slice(0,N).forEach(e=>spots.push([ci,e])));
+  const slots=[[],[]];
+  [[60,H*.5-120],[H*.5+70,H-180]].forEach(([y0,y1],z)=>{
+    for(let r=0;r<2;r++)for(let q=0;q<4;q++)slots[z].push([16+(W-92)*q/3+rnd(-8,8),y0+(y1-y0)*r+rnd(-8,8)]);
+    shuffle(slots[z]);
+  });
+  shuffle(spots).forEach(([ci,e],k)=>{
+    const it=document.createElement('div');it.className='sitem';it.textContent=e;it._c=ci;
+    const[x,y]=slots[k%2].pop();
+    it.style.left=x+'px';it.style.top=y+'px';field.append(it);
+    it.addEventListener('pointerdown',ev=>{
+      ev.preventDefault();if(G.over)return;try{it.setPointerCapture(ev.pointerId)}catch(_){}
+      const r=root.getBoundingClientRect();
+      it._off=[ev.clientX-r.left-parseFloat(it.style.left),ev.clientY-r.top-parseFloat(it.style.top)];
+      it._home=[it.style.left,it.style.top];it.classList.add('drag');sfx.tap();
+    });
+    it.addEventListener('pointermove',ev=>{
+      if(!it.classList.contains('drag'))return;const r=root.getBoundingClientRect();
+      it.style.left=(ev.clientX-r.left-it._off[0])+'px';it.style.top=(ev.clientY-r.top-it._off[1])+'px';
+    });
+    const drop=ev=>{
+      if(!it.classList.contains('drag'))return;it.classList.remove('drag');
+      const k2=bx.findIndex(b=>{const q=b.getBoundingClientRect();return ev.clientX>=q.left-10&&ev.clientX<=q.right+10&&ev.clientY>=q.top-10&&ev.clientY<=q.bottom+10});
+      if(k2<0)return;
+      if(k2===it._c){
+        it.classList.add('in');sfx.ok();done++;upd();
+        bx[k2].classList.remove('yum');void bx[k2].offsetWidth;bx[k2].classList.add('yum');
+        setTimeout(()=>it.remove(),260);
+        if(done>=total)G.after(()=>G.end('coop'),700);
+      }else{
+        sfx.bad();it.classList.add('goback');it.style.left=it._home[0];it.style.top=it._home[1];
+        setTimeout(()=>it.classList.remove('goback'),320);
+      }
+    };
+    it.addEventListener('pointerup',drop);it.addEventListener('pointercancel',drop);
+  });
+}
+
 /* ======================= MENÚ ======================= */
 const GAMES=[
   {sec:'🧸 Aprender juntos · nadie pierde'},
@@ -1123,6 +1346,13 @@ const GAMES=[
   {icon:'🅰️',title:'Vocales',desc:'A de abeja',run:quiz(SETS.vocales)},
   {icon:'😀',title:'Emociones',desc:'Feliz, triste, enojado',run:quiz(SETS.emociones)},
   {icon:'✏️',title:'Camino',desc:'Seguir el trazo con el dedo',run:camino},
+  {sec:'⚡ Al mismo tiempo · los dos juegan a la vez'},
+  {icon:'🧽',title:'Raspa y descubre',desc:'Limpien el barro juntos',run:raspa},
+  {icon:'🧺',title:'Ordena los colores',desc:'Arrastren a su caja',run:ordena},
+  {icon:'🐇',title:'Carrera de animales',desc:'Toca y corre a la meta',run:carrera},
+  {icon:'🎈',title:'Infla el globo',desc:'¡El primero en reventarlo!',run:globo},
+  {icon:'🟣',title:'Pop-it',desc:'Aprieta todas tus burbujas',run:popit},
+  {icon:'🍎',title:'Lluvia de frutas',desc:'Mueve tu canasta',run:lluvia},
   {sec:'🎈 Jugar juntos · nadie pierde'},
   {icon:'🫧',title:'Burbujas',desc:'Revienten 20 juntos',run:G=>burbujas(G,false)},
   {icon:'🎈',title:'Globos de colores',desc:'Solo el color pedido',run:G=>burbujas(G,true)},
