@@ -10,7 +10,7 @@
 <link rel="icon" href="icon.svg">
 <title>Papá e Hija · Juegos</title>
 <style>
-:root{--p0:#4aa8ff;--p1:#ff6fae;--bg:#1b1f3a;--card:#272c52;--txt:#fff}
+:root{--p0:#4aa8ff;--p1:#ff6fae;--b0:#16345c;--b1:#5c1a3c;--l0:#1e3f6e;--l1:#6e2248;--bg:#1b1f3a;--card:#272c52;--txt:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 [hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
@@ -97,25 +97,27 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
 .lanes{width:96vw;display:flex;flex-direction:column;gap:6px}
 .lane{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
 .lane span{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,6vw,30px)}
-.lane.l0 span{background:#1e3f6e}.lane.l1 span{background:#6e2248}
+.lane.l0 span{background:var(--l0)}.lane.l1 span{background:var(--l1)}
 .dice{width:116px;height:116px;border-radius:24px;background:#fff;color:#1b1f3a;font-size:26px;font-weight:900;box-shadow:0 6px 0 rgba(0,0,0,.3)}
 .dice:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
-#back.hold{background:#fff;color:#1b1f3a;transform:translateY(-50%) scale(1.6);transition:transform .7s linear,background .7s linear}
+#back.armed{width:auto;padding:0 14px;border-radius:20px;background:#fff;color:#1b1f3a;font-weight:800;font-size:15px}
 /* Juntos (lado a lado): nada se gira */
 body.side .flip,body.side .half.p1{transform:none}
 body.side #over .msg.flip,body.side #cd .num.flip{display:none}
 /* Frente a frente: el centro mira a quien juega */
 .mid{transition:transform .45s}
 body:not(.side) .mid.toP1{transform:rotate(180deg)}
+/* Con hijo: el niño es azul y papá verde */
+body.hijo{--p0:#46c97b;--p1:#4aa8ff;--b0:#174a33;--b1:#16345c;--l0:#1f5a3c;--l1:#1e3f6e}
 .foot{opacity:.45;font-size:12px;text-align:center}
 
 /* ---------- Juego ---------- */
 #game{position:absolute;inset:0}
 #stage{position:absolute;inset:0;display:flex;flex-direction:column;background:#10142e}
-#back{position:fixed;left:2px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);font-size:13px;padding:0;z-index:30;backdrop-filter:blur(4px)}
+#back{position:fixed;left:2px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);font-size:15px;padding:0;white-space:nowrap;z-index:30;backdrop-filter:blur(4px)}
 .half{flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden;position:relative;padding:8px 14px;text-align:center;transition:flex .08s linear,background .2s}
-.half.p0{background:#16345c}
-.half.p1{background:#5c1a3c;transform:rotate(180deg)}
+.half.p0{background:var(--b0)}
+.half.p1{background:var(--b1);transform:rotate(180deg)}
 .who{font-size:18px;font-weight:700;opacity:.95}
 .half.p0 .who{color:var(--p0)}.half.p1 .who{color:var(--p1)}
 .big{font-size:clamp(28px,9vw,56px);font-weight:800;line-height:1.1;transition:transform .08s}
@@ -180,7 +182,7 @@ body:not(.side) .mid.toP1{transform:rotate(180deg)}
     <button class="chip" id="rst">↺ Marcador</button>
   </div>
   <div id="grid"></div>
-  <p class="foot">«Juntos»: los dos ven todo derecho. «Frente a frente»: la mitad de arriba se gira hacia quien está al otro lado de la mesa.<br>Para salir de un juego, mantén presionada la ✕.<br>Funciona sin internet una vez abierto.</p>
+  <p class="foot">«Juntos»: los dos ven todo derecho. «Frente a frente»: la mitad de arriba se gira hacia quien está al otro lado de la mesa.<br>Para salir de un juego, toca la ✕ dos veces.<br>Funciona sin internet una vez abierto.</p>
 </main>
 
 <div id="game" hidden>
@@ -392,16 +394,18 @@ function pong(G){
   }
   function draw(){
     c.fillStyle='#10142e';c.fillRect(0,0,W,H);
-    c.fillStyle='rgba(74,168,255,.07)';c.fillRect(0,H/2,W,H/2);
-    c.fillStyle='rgba(255,111,174,.07)';c.fillRect(0,0,W,H/2);
+    const cs=getComputedStyle(document.body),C0=cs.getPropertyValue('--p0').trim(),C1=cs.getPropertyValue('--p1').trim();
+    const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return`rgba(${n>>16},${n>>8&255},${n&255},${a})`};
+    c.fillStyle=rgba(C0,.07);c.fillRect(0,H/2,W,H/2);
+    c.fillStyle=rgba(C1,.07);c.fillRect(0,0,W,H/2);
     c.setLineDash([10,10]);c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;
     c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.stroke();c.setLineDash([]);
-    txt(sc[0],W/2,H*.75,90,'rgba(74,168,255,.35)',false);
-    txt(sc[1],W/2,H*.25,90,'rgba(255,111,174,.35)',S.seat==='face');
-    txt(G.name(0),W/2,H-14,13,'rgba(74,168,255,.8)',false);
-    txt(G.name(1),W/2,14,13,'rgba(255,111,174,.8)',S.seat==='face');
-    c.fillStyle='#4aa8ff';c.beginPath();c.roundRect(pad[0]-PW[0]/2,PY[0]-ph/2,PW[0],ph,7);c.fill();
-    c.fillStyle='#ff6fae';c.beginPath();c.roundRect(pad[1]-PW[1]/2,PY[1]-ph/2,PW[1],ph,7);c.fill();
+    txt(sc[0],W/2,H*.75,90,rgba(C0,.35),false);
+    txt(sc[1],W/2,H*.25,90,rgba(C1,.35),S.seat==='face');
+    txt(G.name(0),W/2,H-14,13,rgba(C0,.8),false);
+    txt(G.name(1),W/2,14,13,rgba(C1,.8),S.seat==='face');
+    c.fillStyle=C0;c.beginPath();c.roundRect(pad[0]-PW[0]/2,PY[0]-ph/2,PW[0],ph,7);c.fill();
+    c.fillStyle=C1;c.beginPath();c.roundRect(pad[1]-PW[1]/2,PY[1]-ph/2,PW[1],ph,7);c.fill();
     if(ball){c.fillStyle='#fff';c.beginPath();c.arc(ball.x,ball.y,R,0,7);c.fill()}
   }
   G.loop(t=>{const dt=Math.min((t-last)/1000,.04);last=t;update(dt);draw()});
@@ -1163,9 +1167,14 @@ $('#sSide').onclick=()=>{S.seat='side';save();refresh()};$('#sFace').onclick=()=
 });
 $('#snd').onclick=()=>{S.sound=!S.sound;save();refresh()};
 $('#rst').onclick=()=>{S.score=[0,0];S.medals=0;save();refresh()};
-const bk=$('#back');let holdT;
-bk.addEventListener('pointerdown',e=>{e.preventDefault();bk.classList.add('hold');holdT=setTimeout(()=>{bk.classList.remove('hold');toMenu()},700)});
-['pointerup','pointerleave','pointercancel'].forEach(ev=>bk.addEventListener(ev,()=>{clearTimeout(holdT);bk.classList.remove('hold')}));
+const bk=$('#back');let armT;
+const disarm=()=>{clearTimeout(armT);bk.classList.remove('armed');bk.textContent='✕'};
+bk.addEventListener('click',e=>{
+  e.preventDefault();e.stopPropagation();
+  if(bk.classList.contains('armed')){disarm();toMenu();return}
+  bk.classList.add('armed');bk.textContent='¿Salir? ✕';armT=setTimeout(disarm,3000);
+});
+bk.addEventListener('pointerdown',e=>e.stopPropagation());
 document.addEventListener('contextmenu',e=>e.preventDefault());
 function refresh(){
   $('#n0').value=S.names[0];$('#n1').value=S.names[1];
@@ -1177,6 +1186,8 @@ function refresh(){
   $('#kHija').classList.toggle('on',S.kid!=='hijo');$('#kHijo').classList.toggle('on',S.kid==='hijo');
   $('#sSide').classList.toggle('on',S.seat!=='face');$('#sFace').classList.toggle('on',S.seat==='face');
   document.body.classList.toggle('side',S.seat!=='face');
+  document.body.classList.toggle('hijo',S.kid==='hijo');
+  const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content='#1b1f3a';
   grid.querySelectorAll('h2.sec').forEach(h=>h.textContent=h.dataset.t.replace('{k}',K.w));
   $('#snd').textContent=S.sound?'🔊 Sonido':'🔇 Sonido';
   $('#med').textContent='🏅 Juegos ganados juntos: '+(S.medals||0);
