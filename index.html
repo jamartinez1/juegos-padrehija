@@ -101,6 +101,12 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
 .dice{width:116px;height:116px;border-radius:24px;background:#fff;color:#1b1f3a;font-size:26px;font-weight:900;box-shadow:0 6px 0 rgba(0,0,0,.3)}
 .dice:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
 #back.hold{background:#fff;color:#1b1f3a;transform:translateY(-50%) scale(1.6);transition:transform .7s linear,background .7s linear}
+/* Juntos (lado a lado): nada se gira */
+body.side .flip,body.side .half.p1{transform:none}
+body.side #over .msg.flip,body.side #cd .num.flip{display:none}
+/* Frente a frente: el centro mira a quien juega */
+.mid{transition:transform .45s}
+body:not(.side) .mid.toP1{transform:rotate(180deg)}
 .foot{opacity:.45;font-size:12px;text-align:center}
 
 /* ---------- Juego ---------- */
@@ -150,13 +156,21 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
 <body>
 
 <main id="menu">
-  <h1>👨‍👧 Papá &amp; Hija</h1>
+  <h1 id="ttl">👨‍👧 Papá &amp; Hija</h1>
   <p class="sub">Juegos para dos en un mismo celular · sin anuncios</p>
   <section class="board">
     <div class="pl p0"><b id="s0">0</b><input id="n0" maxlength="12" aria-label="Nombre del jugador de abajo"></div>
     <span class="vs">vs</span>
     <div class="pl p1"><b id="s1">0</b><input id="n1" maxlength="12" aria-label="Nombre del jugador de arriba"></div>
   </section>
+  <div class="opts">
+    <span class="lbl">Juega con:</span>
+    <button class="chip" id="kHija">👧 Hija</button><button class="chip" id="kHijo">👦 Hijo</button>
+  </div>
+  <div class="opts">
+    <span class="lbl">Se sientan:</span>
+    <button class="chip" id="sSide">👨‍👧 Juntos (lado a lado)</button><button class="chip" id="sFace">↕️ Frente a frente</button>
+  </div>
   <div class="medals" id="med"></div>
   <div class="opts">
     <span class="lbl">Nivel:</span>
@@ -166,7 +180,7 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
     <button class="chip" id="rst">↺ Marcador</button>
   </div>
   <div id="grid"></div>
-  <p class="foot">Tip: el de arriba juega con el celular girado hacia él.<br>Para salir de un juego, mantén presionada la ✕.<br>Funciona sin internet una vez abierto.</p>
+  <p class="foot">«Juntos»: los dos ven todo derecho. «Frente a frente»: la mitad de arriba se gira hacia quien está al otro lado de la mesa.<br>Para salir de un juego, mantén presionada la ✕.<br>Funciona sin internet una vez abierto.</p>
 </main>
 
 <div id="game" hidden>
@@ -186,8 +200,9 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 /* ---------- Estado guardado ---------- */
-let S={names:['Papá','Hija'],score:[0,0],sound:true,level:0,edge:false,medals:0};
+let S={names:['Papá','Hija'],score:[0,0],sound:true,level:0,edge:false,medals:0,kid:'hija',seat:'side'};
 try{Object.assign(S,JSON.parse(localStorage.getItem('padrehija')||'{}'))}catch(e){}
+const KID=()=>S.kid==='hijo'?{name:'Hijo',w:'hijo',peque:'el peque',emoji:'👨‍👦'}:{name:'Hija',w:'hija',peque:'la peque',emoji:'👨‍👧'};
 const save=()=>{try{localStorage.setItem('padrehija',JSON.stringify(S))}catch(e){}};
 
 /* ---------- Sonido ---------- */
@@ -221,7 +236,7 @@ function launch(g){
   const timers=new Set();let raf=0;
   const G={
     root:stage,over:false,stopped:false,
-    name:i=>S.names[i]||(i?'Hija':'Papá'),
+    name:i=>S.names[i]||(i?KID().name:'Papá'),
     after(fn,ms){const t=setTimeout(()=>{timers.delete(t);if(!G.stopped)fn()},ms);timers.add(t);return t},
     clear(t){clearTimeout(t);timers.delete(t)},
     loop(fn){const f=t=>{if(G.stopped)return;fn(t);raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)},
@@ -382,9 +397,9 @@ function pong(G){
     c.setLineDash([10,10]);c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;
     c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.stroke();c.setLineDash([]);
     txt(sc[0],W/2,H*.75,90,'rgba(74,168,255,.35)',false);
-    txt(sc[1],W/2,H*.25,90,'rgba(255,111,174,.35)',true);
+    txt(sc[1],W/2,H*.25,90,'rgba(255,111,174,.35)',S.seat==='face');
     txt(G.name(0),W/2,H-14,13,'rgba(74,168,255,.8)',false);
-    txt(G.name(1),W/2,14,13,'rgba(255,111,174,.8)',true);
+    txt(G.name(1),W/2,14,13,'rgba(255,111,174,.8)',S.seat==='face');
     c.fillStyle='#4aa8ff';c.beginPath();c.roundRect(pad[0]-PW[0]/2,PY[0]-ph/2,PW[0],ph,7);c.fill();
     c.fillStyle='#ff6fae';c.beginPath();c.roundRect(pad[1]-PW[1]/2,PY[1]-ph/2,PW[1],ph,7);c.fill();
     if(ball){c.fillStyle='#fff';c.beginPath();c.arc(ball.x,ball.y,R,0,7);c.fill()}
@@ -476,6 +491,7 @@ function mem(G){
   const sc=[0,0];let turn=rnd(0,1),picked=[],lock=false;
   const els=cards.map((c,i)=>{const b=document.createElement('button');b.className='card';b.textContent='❔';b.onpointerdown=ev=>{ev.preventDefault();pick(i)};grid.append(b);return b});
   function banners(){
+    mid.classList.toggle('toP1',turn===1&&!G.over);
     half.forEach((d,i)=>{
       d.classList.toggle('on',!G.over&&turn===i);
       d.innerHTML=`<div class="who">${esc(G.name(i))}</div><div class="big">${sc[i]} 🃏</div>`;
@@ -618,6 +634,7 @@ function quiz(set){
     G.root.append(top,mid,bot);const half=[bot,top];
     const T=6,K=S.level===0?3:6;let stars=0,turn=rnd(0,1),R=null,open=false,miss=0,last=null;
     function banners(){
+    mid.classList.toggle('toP1',turn===1&&!G.over);
       half.forEach((d,i)=>{
         d.classList.toggle('on',turn===i&&!G.over);
         const hint=i===0?`<div class="hint">📢 ${turn===1?`Dile a ${esc(G.name(1))}`:'Tu turno'}: «${R.ask}»</div>`:'';
@@ -1059,6 +1076,8 @@ function escondite(G){
   G.root.append(top,mid,bot);const half=[bot,top];
   const T=3,sc=[0,0];let turn=rnd(0,1),hid=0,open=false;
   function banners(){
+    mid.classList.toggle('toP1',turn===1&&!G.over);
+    mid.classList.toggle('toP1',turn===1&&!G.over);
     half.forEach((d,i)=>{
       d.classList.toggle('on',turn===i&&!G.over);
       const hint=i===0?'<div class="hint">📢 Por turnos: ¿en qué caja se esconde el gatito?</div>':'';
@@ -1109,7 +1128,7 @@ const GAMES=[
   {icon:'🎲',title:'Carrera de dados',desc:'Tira y cuenta los pasos',run:dados},
   {icon:'🎁',title:'Escondite',desc:'¿Dónde está el gatito?',run:escondite},
   {icon:'🧠',title:'Memoria',desc:'Nivel Peque: 8 cartas',run:mem},
-  {sec:'🐾 Atrapa y gana · papá vs hija'},
+  {sec:'🐾 Atrapa y gana · papá vs {k}'},
   {icon:'🦛',title:'Hipopótamos hambrientos',desc:'Atrapa más comida',run:hipos},
   {icon:'🐹',title:'Atrapa topos',desc:'30 segundos, ¡rápido!',run:topos},
   {icon:'⭐',title:'Atrapa estrellas',desc:'Primero en tocarla',run:atrapa({mode:'one',cls:'night',icon:'⭐',emo:['⭐'],hint:'Toca cada estrella antes que el otro. ¡Gana quien llegue a 10!'})},
@@ -1124,7 +1143,7 @@ const GAMES=[
 ];
 const grid=$('#grid');
 GAMES.forEach(g=>{
-  if(g.sec){const h=document.createElement('h2');h.className='sec';h.textContent=g.sec;grid.append(h);return}
+  if(g.sec){const h=document.createElement('h2');h.className='sec';h.dataset.t=g.sec;grid.append(h);return}
   const b=document.createElement('button');b.className='gcard';
   b.innerHTML=`<span class="ic">${g.icon}</span><b>${g.title}</b><small>${g.desc}</small>`;
   b.onclick=()=>launch(g);grid.append(b);
@@ -1135,9 +1154,12 @@ const lvlBox=$('#lvl');
   b.onclick=()=>{S.level=i;save();refresh()};lvlBox.append(b);
 });
 $('#edge').onclick=()=>{S.edge=!S.edge;save();refresh()};
+const setKid=k=>{const old=KID().name;S.kid=k;if(!S.names[1]||S.names[1]===old)S.names[1]=KID().name;save();refresh()};
+$('#kHija').onclick=()=>setKid('hija');$('#kHijo').onclick=()=>setKid('hijo');
+$('#sSide').onclick=()=>{S.seat='side';save();refresh()};$('#sFace').onclick=()=>{S.seat='face';save();refresh()};
 ['n0','n1'].forEach((id,i)=>{
   $('#'+id).addEventListener('input',e=>{S.names[i]=e.target.value;save()});
-  $('#'+id).addEventListener('blur',e=>{if(!e.target.value.trim()){S.names[i]=i?'Hija':'Papá';refresh()}});
+  $('#'+id).addEventListener('blur',e=>{if(!e.target.value.trim()){S.names[i]=i?KID().name:'Papá';refresh()}});
 });
 $('#snd').onclick=()=>{S.sound=!S.sound;save();refresh()};
 $('#rst').onclick=()=>{S.score=[0,0];S.medals=0;save();refresh()};
@@ -1149,7 +1171,13 @@ function refresh(){
   $('#n0').value=S.names[0];$('#n1').value=S.names[1];
   $('#s0').textContent=S.score[0];$('#s1').textContent=S.score[1];
   [...lvlBox.children].forEach((b,i)=>b.classList.toggle('on',S.level===i));
-  $('#edge').textContent=(S.edge?'✅':'⬜')+' Ventaja para la peque';
+  const K=KID();
+  $('#edge').textContent=(S.edge?'✅':'⬜')+' Ventaja para '+K.peque;
+  $('#ttl').textContent=`${K.emoji} Papá & ${K.name}`;document.title=`Papá e ${K.name} · Juegos`;
+  $('#kHija').classList.toggle('on',S.kid!=='hijo');$('#kHijo').classList.toggle('on',S.kid==='hijo');
+  $('#sSide').classList.toggle('on',S.seat!=='face');$('#sFace').classList.toggle('on',S.seat==='face');
+  document.body.classList.toggle('side',S.seat!=='face');
+  grid.querySelectorAll('h2.sec').forEach(h=>h.textContent=h.dataset.t.replace('{k}',K.w));
   $('#snd').textContent=S.sound?'🔊 Sonido':'🔇 Sonido';
   $('#med').textContent='🏅 Juegos ganados juntos: '+(S.medals||0);
 }
