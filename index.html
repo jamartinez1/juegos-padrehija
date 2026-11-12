@@ -55,7 +55,7 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
 .item{background:#272c52;border-radius:18px;font-size:clamp(36px,13vw,70px);font-weight:900;display:flex;align-items:center;justify-content:center}
 .item.good{background:#2fbf5f;animation:bounce .5s}
 .item.shake{animation:shake .35s}
-.dot{display:block;width:62%;aspect-ratio:1;border-radius:50%}
+.dot{display:block;width:62%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.3)}
 @keyframes bounce{50%{transform:scale(1.18)}}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .field{position:absolute;inset:0;overflow:hidden;background:linear-gradient(#1c3b6b,#7fc6f5)}
@@ -70,8 +70,25 @@ h2.sec{grid-column:1/-1;margin:10px 0 0;font-size:17px;opacity:.9}
 .pal.pbot{bottom:10px}.pal.ptop{top:10px}
 .sw{width:36px;height:36px;border-radius:50%;border:3px solid #fff8;font-size:22px;padding:0}
 .sw.on{border-color:#222;transform:scale(1.2)}
-.key{flex:1;height:min(30dvh,150px);border-radius:18px;transition:transform .08s}
+.key{flex:1;height:min(30dvh,150px);border-radius:18px;transition:transform .08s,opacity .2s;font-weight:900;font-size:14px;color:rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding:0 0 10px}
 .key.hit{transform:scale(.92);filter:brightness(1.4)}
+.key.dim{opacity:.4}
+.key.next{box-shadow:0 0 0 5px #fff inset,0 0 24px #fff;animation:bounce .7s infinite}
+.key.next::before{content:'👆';font-size:34px}
+.pmid{display:flex;flex-direction:column;gap:6px;align-items:center;padding:0 40px}
+.songs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.songs .chip{padding:7px 11px;font-size:13px}
+.sprog{font-size:14px;font-weight:700;text-align:center}
+.lvpick{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:16px 44px}
+.lvs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:min(100%,420px)}
+.lv{background:var(--card);border-radius:20px;padding:16px 4px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.lv b{font-size:38px;line-height:1}.lv small{font-size:13px;opacity:.75}
+.lv.on{background:#fff;color:#1b1f3a}
+.cups{position:relative;width:min(78vw,460px);height:min(28dvh,170px)}
+.cup{position:absolute;top:0;width:30%;height:100%;background:none;padding:0;transition:left .4s}
+.cup .an{position:absolute;left:0;right:0;bottom:6%;text-align:center;font-size:clamp(36px,12vw,60px);line-height:1}
+.cup .cp{position:absolute;left:6%;right:6%;top:10%;bottom:0;background:linear-gradient(100deg,#ff8a65,#e64a19 70%,#bf360c);clip-path:polygon(20% 0,80% 0,100% 100%,0 100%);transition:transform .3s}
+.cup.lift .cp{transform:translateY(-62%)}
 .medals{font-size:15px;font-weight:700;opacity:.9}
 .big.bigp{font-size:clamp(56px,20vw,100px)}
 .big .dot{display:inline-block;width:1em}
@@ -133,6 +150,19 @@ body.hijo{--p0:#46c97b;--p1:#4aa8ff;--b0:#174a33;--b1:#16345c;--l0:#1f5a3c;--l1:
 .sitem.drag{transform:scale(1.3);z-index:5;transition:none}
 .sitem.in{transform:scale(0);transition:transform .25s}
 .sitem.goback{transition:left .3s,top .3s}
+.gear{position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;width:44px;height:44px;border-radius:50%;background:var(--card);font-size:22px;padding:0}
+.summary{background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 14px;font-size:13px;opacity:.85}
+#settings{position:fixed;inset:0;z-index:50;background:rgba(5,7,20,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#1f2448;width:100%;max-width:560px;max-height:88dvh;overflow-y:auto;border-radius:24px 24px 0 0;padding:16px 16px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.shead{display:flex;justify-content:space-between;align-items:center;font-size:20px}
+.sclose{width:36px;height:36px;border-radius:50%;background:var(--card);padding:0}
+.srow{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.srow .opts{justify-content:flex-start}
+.stit{font-weight:700;font-size:15px}
+.snote{font-size:12px;opacity:.6;line-height:1.35}
+.chip.armed{background:#e53935;color:#fff;font-weight:700}
+.sdone{background:#fff;color:#1b1f3a;font-weight:800;font-size:17px;padding:14px;border-radius:16px}
 .foot{opacity:.45;font-size:12px;text-align:center}
 
 /* ---------- Juego ---------- */
@@ -182,6 +212,7 @@ body.hijo{--p0:#46c97b;--p1:#4aa8ff;--b0:#174a33;--b1:#16345c;--l0:#1f5a3c;--l1:
 <body>
 
 <main id="menu">
+  <button class="gear" id="gear" aria-label="Opciones">⚙️</button>
   <h1 id="ttl">👨‍👧 Papá &amp; Hija</h1>
   <p class="sub">Juegos para dos en un mismo celular · sin anuncios</p>
   <section class="board">
@@ -189,25 +220,33 @@ body.hijo{--p0:#46c97b;--p1:#4aa8ff;--b0:#174a33;--b1:#16345c;--l0:#1f5a3c;--l1:
     <span class="vs">vs</span>
     <div class="pl p1"><b id="s1">0</b><input id="n1" maxlength="12" aria-label="Nombre del jugador de arriba"></div>
   </section>
-  <div class="opts">
-    <span class="lbl">Juega con:</span>
-    <button class="chip" id="kHija">👧 Hija</button><button class="chip" id="kHijo">👦 Hijo</button>
-  </div>
-  <div class="opts">
-    <span class="lbl">Se sientan:</span>
-    <button class="chip" id="sSide">👨‍👧 Juntos (lado a lado)</button><button class="chip" id="sFace">↕️ Frente a frente</button>
-  </div>
   <div class="medals" id="med"></div>
-  <div class="opts">
-    <span class="lbl">Nivel:</span>
-    <span id="lvl"></span>
-    <button class="chip" id="edge"></button>
-    <button class="chip" id="snd"></button>
-    <button class="chip" id="rst">↺ Marcador</button>
-  </div>
+  <button class="summary" id="sum"></button>
   <div id="grid"></div>
-  <p class="foot">«Juntos»: los dos ven todo derecho. «Frente a frente»: la mitad de arriba se gira hacia quien está al otro lado de la mesa.<br>Para salir de un juego, toca la ✕ dos veces.<br>Funciona sin internet una vez abierto.</p>
+  <p class="foot">Para salir de un juego, toca la ✕ dos veces.<br>Funciona sin internet una vez abierto.</p>
 </main>
+
+<div id="settings" hidden>
+  <div class="sheet">
+    <div class="shead"><b>⚙️ Opciones</b><button class="sclose" id="sclose" aria-label="Cerrar">✕</button></div>
+    <div class="srow"><div class="stit">Juega con</div>
+      <div class="opts"><button class="chip" id="kHija">👧 Hija</button><button class="chip" id="kHijo">👦 Hijo</button></div></div>
+    <div class="srow"><div class="stit">Se sientan</div>
+      <div class="opts"><button class="chip" id="sSide">👨‍👧 Juntos</button><button class="chip" id="sFace">↕️ Frente a frente</button></div>
+      <div class="snote">Juntos: los dos ven todo derecho. Frente a frente: la mitad de arriba se gira hacia quien está al otro lado de la mesa.</div></div>
+    <div class="srow"><div class="stit">Nivel</div>
+      <div class="opts" id="lvl"></div>
+      <div class="snote">Peque: 3 opciones por pregunta y contar hasta 3. Los niveles más altos traen más opciones, números más grandes y vasos más rápidos.</div></div>
+    <div class="srow"><div class="stit">Ventaja</div>
+      <div class="opts"><button class="chip" id="edge"></button></div>
+      <div class="snote">En los juegos de competencia, papá va más lento o con menos ayuda.</div></div>
+    <div class="srow"><div class="stit">Sonido</div>
+      <div class="opts"><button class="chip" id="snd"></button></div></div>
+    <div class="srow"><div class="stit">Marcador</div>
+      <div class="opts"><button class="chip" id="rst">↺ Reiniciar marcador y medallas</button></div></div>
+    <button class="sdone" id="sdone">Listo</button>
+  </div>
+</div>
 
 <div id="game" hidden>
   <div id="stage"></div>
@@ -506,15 +545,31 @@ function ttt(G){
 
 /* 6. Memoria: encuentra las parejas por turnos */
 function mem(G){
+  const LV=[[6,3],[8,4],[12,4],[16,4],[20,4],[24,4]];
+  const box=document.createElement('div');box.className='lvpick';
+  const sel=S.mem==null?Math.min(S.level+1,5):S.mem;
+  box.innerHTML=`<div class="big">🧠 Elige el nivel</div><div class="lvs">${LV.map(([n],i)=>`<button class="lv${i===sel?' on':''}" data-i="${i}"><b>${i+1}</b><small>${n} cartas</small></button>`).join('')}</div><div class="hint">📢 Encuentren las parejas por turnos. En los niveles 1 y 2 las cartas se muestran un momento al empezar.</div>`;
+  G.root.append(box);
+  box.addEventListener('click',e=>{
+    const b=e.target.closest('.lv');if(!b)return;
+    S.mem=+b.dataset.i;save();sfx.tap();box.remove();start(...LV[S.mem]);
+  });
+  function start(n,cols){
   const top=document.createElement('div'),bot=document.createElement('div');
   top.className='half p1 turn';bot.className='half p0 turn';
   const mid=document.createElement('div');mid.className='mid';
-  const n=[8,12,16,20][S.level],rows=n/4;
+  const rows=n/cols;
   const grid=document.createElement('div');grid.className='mem';
-  grid.style.cssText=`width:min(88vw,calc(52dvh*4/${rows}));aspect-ratio:4/${rows}`;
+  grid.style.cssText=`grid-template-columns:repeat(${cols},1fr);width:min(88vw,calc(52dvh*${cols}/${rows}));aspect-ratio:${cols}/${rows}`;
   mid.append(grid);G.root.append(top,mid,bot);
   const half=[bot,top];
-  const pool=shuffle(['🐶','🐱','🐼','🦊','🐸','🦁','🐵','🐰','🐢','🦄','🐙','🐧']).slice(0,n/2);
+  const THEMES=[
+    ['🐶','🐱','🐼','🦊','🐸','🦁','🐵','🐰','🐢','🦄','🐙','🐧'],
+    ['🍎','🍌','🍓','🍊','🍇','🍉','🍍','🥭','🍒','🥝','🍋','🥥'],
+    ['🚗','🚌','🚒','🚓','🚜','🚲','✈️','🚀','🚂','⛵','🚁','🛵'],
+    ['⭐','🌙','☀️','🌈','🎈','⚽','🎁','🌸','🍦','🎂','🧸','🥁'],
+  ];
+  const pool=shuffle(THEMES[rnd(0,THEMES.length-1)].slice()).slice(0,n/2);
   const cards=shuffle([...pool,...pool]).map(e=>({e,up:false,done:false}));
   const sc=[0,0];let turn=rnd(0,1),picked=[],lock=false;
   const els=cards.map((c,i)=>{const b=document.createElement('button');b.className='card';b.textContent='❔';b.onpointerdown=ev=>{ev.preventDefault();pick(i)};grid.append(b);return b});
@@ -543,9 +598,10 @@ function mem(G){
     }
   }
   banners();
-  if(S.level===0){
+  if(n<=8){
     lock=true;cards.forEach((_,i)=>show(i,true));
     G.after(()=>{cards.forEach((_,i)=>show(i,false));lock=false},2800);
+  }
   }
 }
 
@@ -595,41 +651,49 @@ const SHAPES_SVG={
   estrella:'<polygon points="50,6 61,38 95,38 67,58 78,92 50,71 22,92 33,58 5,38 39,38"/>',
   corazon:'<path d="M50 88C12 58 6 32 24 19c12-8 23-1 26 9 3-10 14-17 26-9 18 13 12 39-26 69z"/>',
   rombo:'<polygon points="50,6 90,50 50,94 10,50"/>',
+  ovalo:'<ellipse cx="50" cy="50" rx="45" ry="28"/>',
+  rectangulo:'<rect x="5" y="26" width="90" height="48" rx="5"/>',
+  pentagono:'<polygon points="50,6 94,38 77,90 23,90 6,38"/>',
+  hexagono:'<polygon points="27,10 73,10 96,50 73,90 27,90 4,50"/>',
+  luna:'<path d="M64 8A42 42 0 1 0 92 68 36 36 0 1 1 64 8z"/>',
+  flecha:'<polygon points="6,38 56,38 56,16 96,50 56,84 56,62 6,62"/>',
+  cruz:'<polygon points="36,8 64,8 64,36 92,36 92,64 64,64 64,92 36,92 36,64 8,64 8,36 36,36"/>',
 };
 const shp=(k,col)=>`<svg class="shp" viewBox="0 0 100 100" fill="${col}">${SHAPES_SVG[k]}</svg>`;
 const sil=e=>`<span class="sil">${e}</span>`;
 const SETS={
   animales:{
-    items:[['🐶','el perro','¡Guau guau!'],['🐱','el gato','¡Miau!'],['🐮','la vaca','¡Muuu!'],['🐷','el cerdito','¡Oinc oinc!'],['🐸','la rana','¡Croac croac!'],['🐑','la oveja','¡Bee bee!'],['🦁','el león','¡Grrr!'],['🐔','la gallina','¡Pío pío!'],['🐴','el caballo','¡Iiiji!'],['🦆','el pato','¡Cuac cuac!']].map(([f,n,s])=>({f,n,s,p:f})),
+    items:[['🐶','el perro','¡Guau guau!'],['🐱','el gato','¡Miau!'],['🐮','la vaca','¡Muuu!'],['🐷','el cerdito','¡Oinc oinc!'],['🐸','la rana','¡Croac croac!'],['🐑','la oveja','¡Bee bee!'],['🦁','el león','¡Grrr!'],['🐔','la gallina','¡Co co co!'],['🐴','el caballo','¡Iiiji!'],['🦆','el pato','¡Cuac cuac!'],['🐥','el pollito','¡Pío pío!'],['🐓','el gallo','¡Quiquiriquí!'],['🐵','el mono','¡Uh uh ah ah!'],['🐘','el elefante','¡Prrrr!'],['🐺','el lobo','¡Auuuu!'],['🐝','la abeja','¡Bzzzz!'],['🦉','el búho','¡Uuh uuh!'],['🐍','la serpiente','¡Sssss!'],['🐭','el ratón','¡Iii iii!'],['🦃','el pavo','¡Glu glu glu!'],['🐯','el tigre','¡Roaar!'],['🐻','el oso','¡Grrr grrr!'],['🐐','la cabra','¡Mee mee!'],['🐦','el pájaro','¡Pío pío pío!'],['🐬','el delfín','¡Iik iik!']].map(([f,n,s])=>({f,n,s,p:f})),
     ask:t=>`¿Dónde está ${t.n}?`,
   },
   colores:{
-    items:[['#e53935','el rojo'],['#1e88e5','el azul'],['#fdd835','el amarillo'],['#43a047','el verde'],['#fb8c00','el naranja'],['#8e24aa','el morado'],['#f06292','el rosado']].map(([c,n])=>({f:dot(c),n,s:'',p:dot(c)})),
+    items:[['#e53935','el rojo'],['#1e88e5','el azul'],['#fdd835','el amarillo'],['#43a047','el verde'],['#fb8c00','el naranja'],['#8e24aa','el morado'],['#f06292','el rosado'],['#795548','el café'],['#111111','el negro'],['#ffffff','el blanco'],['#9e9e9e','el gris'],['#4fc3f7','el celeste']].map(([c,n])=>({f:dot(c),n,s:'',p:dot(c)})),
     ask:t=>`Toca ${t.n}`,
   },
   frutas:{
-    items:[['🍎','la manzana'],['🍌','el banano'],['🍓','la fresa'],['🍊','la naranja'],['🍇','las uvas'],['🍉','la sandía'],['🍍','la piña'],['🥭','el mango']].map(([f,n])=>({f,n,s:'',p:f})),
+    items:[['🍎','la manzana'],['🍌','el banano'],['🍓','la fresa'],['🍊','la naranja'],['🍇','las uvas'],['🍉','la sandía'],['🍍','la piña'],['🥭','el mango'],['🍐','la pera'],['🍒','las cerezas'],['🍋','el limón'],['🥝','el kiwi'],['🥥','el coco'],['🍑','el durazno'],['🥑','el aguacate'],['🫐','los arándanos']].map(([f,n])=>({f,n,s:'',p:f})),
     ask:t=>`¿Dónde está ${t.n}?`,
   },
   numeros:{
     ordered:true,
-    items:[['1','uno'],['2','dos'],['3','tres'],['4','cuatro'],['5','cinco']].map(([f,n],i)=>({f,n,s:'Son '+n,p:'🍎'.repeat(i+1)})),
+    items:[['1','uno'],['2','dos'],['3','tres'],['4','cuatro'],['5','cinco'],['6','seis'],['7','siete'],['8','ocho'],['9','nueve'],['10','diez']].map(([f,n],i)=>({f,n,s:'Son '+n,p:i<5?'🍎'.repeat(i+1):`<span style="display:inline-block;font-size:.46em;line-height:1.15">${'🍎'.repeat(5)}<br>${'🍎'.repeat(i-4)}</span>`})),
+    get(){return this.items.slice(0,[5,5,7,10][S.level])},
     ask:()=>'¿Cuántas manzanas hay? Cuéntenlas juntos',
   },
   formas:{
-    items:[['circulo','el círculo'],['cuadrado','el cuadrado'],['triangulo','el triángulo'],['estrella','la estrella'],['corazon','el corazón'],['rombo','el rombo']].map(([k,n])=>({f:shp(k,'#ffd54f'),n,s:'¡Es '+n+'!',p:shp(k,'#fff')})),
+    items:[['circulo','el círculo'],['cuadrado','el cuadrado'],['triangulo','el triángulo'],['estrella','la estrella'],['corazon','el corazón'],['rombo','el rombo'],['ovalo','el óvalo'],['rectangulo','el rectángulo'],['luna','la luna'],['flecha','la flecha'],['cruz','la cruz'],['pentagono','el pentágono'],['hexagono','el hexágono']].map(([k,n])=>({f:shp(k,'#ffd54f'),n,s:'¡Es '+n+'!',p:shp(k,'#fff')})),
     ask:t=>`¿Dónde está ${t.n}?`,
   },
   sombras:{
-    items:[['🐘','el elefante'],['🦒','la jirafa'],['🐇','el conejo'],['🐢','la tortuga'],['🦋','la mariposa'],['🐟','el pez'],['🦆','el pato'],['🐍','la serpiente'],['🚗','el carro'],['✈️','el avión'],['🌳','el árbol'],['🦀','el cangrejo']].map(([f,n])=>({f,n,s:'¡Es '+n+'!',p:sil(f)})),
+    items:[['🐘','el elefante'],['🦒','la jirafa'],['🐇','el conejo'],['🐢','la tortuga'],['🦋','la mariposa'],['🐟','el pez'],['🦆','el pato'],['🐍','la serpiente'],['🚗','el carro'],['✈️','el avión'],['🌳','el árbol'],['🦀','el cangrejo'],['🦖','el dinosaurio'],['🐪','el camello'],['🦘','el canguro'],['🐊','el cocodrilo'],['🦈','el tiburón'],['🐓','el gallo'],['🦩','el flamenco'],['🚲','la bicicleta'],['🚂','el tren'],['🚀','el cohete'],['🚁','el helicóptero'],['☂️','la sombrilla'],['🎸','la guitarra'],['🔑','la llave']].map(([f,n])=>({f,n,s:'¡Es '+n+'!',p:sil(f)})),
     ask:()=>'¿De quién es esta sombra?',
   },
   comida:{
-    items:[['🐰','🥕','el conejo'],['🐵','🍌','el mono'],['🐶','🦴','el perro'],['🐭','🧀','el ratón'],['🐝','🌸','la abeja'],['🐱','🐟','el gato'],['🐼','🎋','el panda'],['🐿️','🌰','la ardilla']].map(([a,f,n])=>({f,n,s:'¡Ñam ñam!',p:a})),
+    items:[['🐰','🥕','el conejo'],['🐵','🍌','el mono'],['🐶','🦴','el perro'],['🐭','🧀','el ratón'],['🐝','🌸','la abeja'],['🐱','🐟','el gato'],['🐼','🎋','el panda'],['🐿️','🌰','la ardilla'],['🐮','🌿','la vaca'],['🐴','🌾','el caballo'],['🐔','🌽','la gallina'],['🐻','🍯','el oso'],['🐸','🪰','la rana'],['🐦','🪱','el pájaro'],['🐘','🥜','el elefante'],['🐧','🦐','el pingüino']].map(([a,f,n])=>({f,n,s:'¡Ñam ñam!',p:a})),
     ask:t=>`¿Qué come ${t.n}?`,
   },
   colorde:{
-    items:[['🍌','#fdd835','el banano','amarillo'],['🍎','#e53935','la manzana','roja'],['🐸','#43a047','la rana','verde'],['🍊','#fb8c00','la naranja','naranja'],['🍆','#8e24aa','la berenjena','morada'],['🐳','#1e88e5','la ballena','azul'],['🐷','#f06292','el cerdito','rosado']].map(([e,c,n,a])=>({f:dot(c),n,s:'¡Es '+a+'!',p:e})),
+    items:[['🍌','#fdd835','el banano','amarillo'],['🍎','#e53935','la manzana','roja'],['🐸','#43a047','la rana','verde'],['🍊','#fb8c00','la naranja','naranja'],['🍆','#8e24aa','la berenjena','morada'],['🐳','#1e88e5','la ballena','azul'],['🐷','#f06292','el cerdito','rosado'],['🍓','#e53935','la fresa','roja'],['🌻','#fdd835','el girasol','amarillo'],['🥦','#43a047','el brócoli','verde'],['🥕','#fb8c00','la zanahoria','naranja'],['🍇','#8e24aa','las uvas','moradas'],['🐻','#795548','el oso','café'],['🐘','#9e9e9e','el elefante','gris'],['☁️','#ffffff','la nube','blanca']].map(([e,c,n,a])=>({f:dot(c),n,s:'¡Es '+a+'!',p:e})),
     ask:t=>`¿De qué color es ${t.n}?`,
   },
   vocales:{
@@ -638,12 +702,12 @@ const SETS={
     ask:t=>`Busca la ${t.n} de ${t.w}`,
   },
   emociones:{
-    items:[['😀','feliz'],['😢','triste'],['😠','enojado'],['😴','con sueño'],['😮','sorprendido'],['😨','asustado']].map(([f,n])=>({f,n,s:`¡Hagan cara de ${n}!`,p:f})),
+    items:[['😀','feliz'],['😢','triste'],['😠','enojado'],['😴','con sueño'],['😮','sorprendido'],['😨','asustado'],['😂','muerto de risa'],['🤒','enfermo'],['🥰','enamorado'],['🤔','pensando']].map(([f,n])=>({f,n,s:`¡Hagan cara de ${n}!`,p:f})),
     ask:t=>`¿Quién está ${t.n}?`,
   },
   tamanos:{
     make(){
-      const E=['🐘','🐻','🐟','🚗','🌳','⭐','🍎','🐶'],e=E[rnd(0,E.length-1)],big=Math.random()<.5;
+      const E=['🐘','🐻','🐟','🚗','🌳','⭐','🍎','🐶','🐱','🦋','🎈','🏠','🌸','⚽','🚌','🐢'],e=E[rnd(0,E.length-1)],big=Math.random()<.5;
       const opts=shuffle([38,66,100]).map(z=>({z,f:`<span style="font-size:${z}%">${e}</span>`}));
       const target=opts.find(o=>o.z===(big?100:38));
       target.p=`<span style="font-size:${big?100:45}%">${e}</span>`;
@@ -660,7 +724,7 @@ function quiz(set){
     const mid=document.createElement('div');mid.className='mid';
     const grid=document.createElement('div');mid.append(grid);
     G.root.append(top,mid,bot);const half=[bot,top];
-    const T=6,K=S.level===0?3:6;let stars=0,turn=rnd(0,1),R=null,open=false,miss=0,last=null;
+    const T=6,K=S.level===0?3:6;let stars=0,turn=rnd(0,1),R=null,open=false,miss=0;const seen=[];
     function banners(){
     mid.classList.toggle('toP1',turn===1&&!G.over);
       half.forEach((d,i)=>{
@@ -672,10 +736,11 @@ function quiz(set){
     function round(){
       if(set.make)R=set.make();
       else{
-        const n=Math.min(K,set.items.length);let target;
-        do{target=set.items[rnd(0,set.items.length-1)]}while(target===last);
-        last=target;
-        let opts=[target,...shuffle(set.items.filter(x=>x!==target)).slice(0,n-1)];
+        const items=set.get?set.get():set.items;
+        const n=Math.min(K,items.length);let target;
+        do{target=items[rnd(0,items.length-1)]}while(seen.includes(target));
+        seen.push(target);if(seen.length>Math.min(4,items.length-1))seen.shift();
+        let opts=[target,...shuffle(items.filter(x=>x!==target)).slice(0,n-1)];
         opts=set.ordered?opts.sort((a,b)=>set.items.indexOf(a)-set.items.indexOf(b)):shuffle(opts);
         R={opts,target,ask:set.ask(target)};
       }
@@ -727,7 +792,7 @@ function dino(G){
   const mid=document.createElement('div');mid.className='mid';
   const field=document.createElement('div');field.className='dfield';mid.append(field);
   G.root.append(top,mid,bot);const half=[bot,top];
-  const T=5,MAX=S.level===0?3:5,FOOD=['🍎','🍌','🍓','🥕','🍪'];
+  const T=5,MAX=[3,5,8,10][S.level],NF=MAX>5?12:8,FOOD=['🍎','🍌','🍓','🥕','🍪','🍇','🍉','🥦'];
   let stars=0,turn=rnd(0,1),N=1,n=0,food='🍎',open=false,lastN=0;
   function banners(msg){
     half.forEach((d,i)=>{
@@ -740,8 +805,8 @@ function dino(G){
     do{N=rnd(1,MAX)}while(N===lastN);lastN=N;
     n=0;food=FOOD[rnd(0,FOOD.length-1)];
     field.innerHTML='<div class="dino">🦖</div><div class="dcount"></div>';
-    for(let k=0;k<8;k++){
-      const a=k/8*6.283,b=document.createElement('button');b.className='dfood';b.textContent=food;
+    for(let k=0;k<NF;k++){
+      const a=k/NF*6.283,b=document.createElement('button');b.className='dfood';b.textContent=food;
       b.style.left=(50+40*Math.cos(a))+'%';b.style.top=(50+40*Math.sin(a))+'%';
       b.onpointerdown=e=>{e.preventDefault();eat(b)};field.append(b);
     }
@@ -767,18 +832,23 @@ function dino(G){
 function camino(G){
   const{cv,c,W,H}=mkCanvas(G);
   const T=5,upd=coopHud(G);
-  const PAIRS=shuffle([['🐰','🥕','al conejo','la zanahoria'],['🐝','🌸','a la abeja','la flor'],['🐶','🦴','al perro','el hueso'],['🚗','🏠','el carro','la casa'],['🐵','🍌','al mono','el banano']]);
+  const PAIRS=shuffle([['🐰','🥕','al conejo','la zanahoria'],['🐝','🌸','a la abeja','la flor'],['🐶','🦴','al perro','el hueso'],['🚗','🏠','el carro','la casa'],['🐵','🍌','al mono','el banano'],['🐭','🧀','al ratón','el queso'],['🚀','🌙','el cohete','la luna'],['🐻','🍯','al oso','la miel'],['🐱','🐟','al gato','el pescado'],['⚽','🥅','el balón','el arco']]);
   const PATHS=[
     t=>[.12+.76*t,.62-.24*t],
     t=>[.5-.36*Math.cos(t*Math.PI),.62-.28*Math.sin(t*Math.PI)],
     t=>[.12+.76*t,.5+.12*Math.sin(t*6.283)],
     t=>{const s=Math.min(3.999,t*4),k=Math.floor(s),ys=[.62,.38,.62,.38,.62];return[.12+.76*t,ys[k]+(ys[k+1]-ys[k])*(s-k)]},
     t=>[.5+(.05+.3*t)*Math.cos(t*12.566),.5+(.03+.16*t)*Math.sin(t*12.566)],
+    t=>[.5+.34*Math.cos(t*6.0+1.7),.5+.14*Math.sin(t*6.0+1.7)],
+    t=>[.5+.36*Math.sin(t*6.283),.5+.13*Math.sin(t*12.566)],
+    t=>{const s=Math.min(3.999,t*4),k=Math.floor(s),P=[[.14,.62],[.14,.38],[.86,.38],[.86,.62],[.3,.62]],u=s-k;return[P[k][0]+(P[k+1][0]-P[k][0])*u,P[k][1]+(P[k+1][1]-P[k][1])*u]},
+    t=>[.12+.76*t,.5+.1*Math.sin(t*18.85)],
   ];
+  const ORD=[0,1,...shuffle([2,3,4,5,6,7,8])];
   let lvl=0,idx=0,pts=[],done=false,stars=0,pair=PAIRS[0];
   function setup(){
     pair=PAIRS[lvl%PAIRS.length];idx=0;done=false;pts=[];
-    const f=PATHS[lvl%PATHS.length];
+    const f=PATHS[ORD[lvl%ORD.length]];
     for(let k=0;k<=120;k++){const[x,y]=f(k/120);pts.push([x*W,y*H])}
     upd(stars,T,`Lleven ${pair[2]} hasta ${pair[3]} con el dedo, siguiendo el camino`);
   }
@@ -888,17 +958,60 @@ function pintar(G){
   const up=e=>st.delete(e.pointerId);cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
 }
 
-/* Piano */
+/* Piano: libre, o una canción guiada tecla a tecla (las teclas están repartidas entre los dos) */
+const SONGS=[
+  ['⭐','Estrellita','0 0 4 4 5 5 4 3 3 2 2 1 1 0 4 4 3 3 2 2 1 4 4 3 3 2 2 1 0 0 4 4 5 5 4 3 3 2 2 1 1 0'],
+  ['🐥','Los pollitos','0 1 2 3 4 4 5 5 5 5 4 3 3 3 3 2 2 1 1 1 1 0'],
+  ['🐑','El corderito','2 1 0 1 2 2 2 1 1 1 2 4 4 2 1 0 1 2 2 2 2 1 1 2 1 0'],
+  ['🔔','Campanas','2 2 2 2 2 2 2 4 0 1 2 3 3 3 3 3 2 2 2 2 1 1 2 1 4'],
+  ['🎼','Himno a la alegría','2 2 3 4 4 3 2 1 0 0 1 2 2 1 1 2 2 3 4 4 3 2 1 0 0 1 2 1 0 0'],
+  ['😴','Martinillo','0 1 2 0 0 1 2 0 2 3 4 2 3 4 4 5 4 3 2 0 4 5 4 3 2 0'],
+];
+let lastSong=-1;
 function piano(G){
-  const h=G.split();
-  const NOTES=[[262,294,330,349],[392,440,494,523]],COL=['#e53935','#fdd835','#43a047','#1e88e5'];
-  h.forEach((d,i)=>{
-    d.innerHTML=`<div class="who">${esc(G.name(i))} 🎵</div><div class="row">${NOTES[i].map((f,k)=>`<button class="key" data-f="${f}" style="background:${COL[k]}"></button>`).join('')}</div>`;
-    d.addEventListener('pointerdown',e=>{
-      const b=e.target.closest('.key');if(!b)return;e.preventDefault();
-      beep(+b.dataset.f,.7,'triangle',.22);b.classList.add('hit');setTimeout(()=>b.classList.remove('hit'),120);
-    });
+  const top=document.createElement('div'),bot=document.createElement('div');
+  top.className='half p1';bot.className='half p0';
+  const mid=document.createElement('div');mid.className='mid';
+  G.root.append(top,mid,bot);const half=[bot,top];
+  const F=[262,294,330,349,392,440,494,523],NM=['DO','RE','MI','FA','SOL','LA','SI','DO'];
+  const COL=['#e53935','#fb8c00','#fdd835','#43a047','#26c6da','#1e88e5','#8e24aa','#f06292'];
+  half.forEach((d,i)=>{
+    d.innerHTML=`<div class="who">${esc(G.name(i))} 🎵</div><div class="row">${[0,1,2,3].map(j=>{const k=i*4+j;return`<button class="key" data-k="${k}" style="background:${COL[k]}">${NM[k]}</button>`}).join('')}</div>`;
   });
+  const keys=[];G.root.querySelectorAll('.key').forEach(b=>keys[+b.dataset.k]=b);
+  mid.innerHTML=`<div class="pmid"><div class="songs"><button class="chip" data-s="-1">🎹 Libre</button>${SONGS.map((s,i)=>`<button class="chip" data-s="${i}">${s[0]} ${s[1]}</button>`).join('')}<button class="chip" data-s="oir">👂 Oírla</button></div><div class="sprog"></div></div>`;
+  const prog=mid.querySelector('.sprog'),chips=[...mid.querySelectorAll('.chip')];
+  let song=-1,seq=[],pos=0,demo=false,tok=0;
+  function hit(k){beep(F[k],.7,'triangle',.22);keys[k].classList.add('hit');setTimeout(()=>keys[k].classList.remove('hit'),130)}
+  function mark(){
+    const guide=song>=0&&!demo&&pos<seq.length;
+    keys.forEach((b,k)=>{b.classList.toggle('next',guide&&seq[pos]===k);b.classList.toggle('dim',guide&&seq[pos]!==k)});
+    chips.forEach(c=>{c.classList.toggle('on',c.dataset.s===String(song));if(c.dataset.s==='oir')c.hidden=song<0});
+    prog.textContent=song<0?'Toquen lo que quieran, o elijan una canción para aprenderla':
+      demo?'👂 Escuchen cómo suena…':`${SONGS[song][0]} ${pos} / ${seq.length} · toquen la tecla que brilla 👆`;
+  }
+  function pick(s){tok++;demo=false;song=lastSong=s;seq=s<0?[]:SONGS[s][2].split(' ').map(Number);pos=0;mark()}
+  function listen(){
+    if(song<0)return;const id=++tok;demo=true;pos=0;mark();let i=0;
+    const step=()=>{
+      if(tok!==id)return;
+      if(i>=seq.length){demo=false;mark();return}
+      hit(seq[i++]);G.after(step,400);
+    };
+    G.after(step,300);
+  }
+  mid.addEventListener('click',e=>{
+    const c=e.target.closest('.chip');if(!c||G.over)return;sfx.tap();
+    if(c.dataset.s==='oir')listen();else pick(+c.dataset.s);
+  });
+  G.root.addEventListener('pointerdown',e=>{
+    const b=e.target.closest('.key');if(!b)return;e.preventDefault();
+    const k=+b.dataset.k;hit(k);
+    if(song<0||demo||G.over||k!==seq[pos])return;
+    pos++;mark();
+    if(pos>=seq.length)G.after(()=>G.end('coop'),700);
+  });
+  pick(lastSong);
 }
 
 /* ======================= JUEGOS DE ATRAPAR ======================= */
@@ -1095,40 +1208,55 @@ function dados(G){
   draw();
 }
 
-/* Escondite: ¿en qué caja está el gatito? */
-function escondite(G){
+/* Vasos mágicos: el animal se esconde bajo un vaso, los vasos se mezclan y hay que seguirlo con la mirada */
+function vasos(G){
   const top=document.createElement('div'),bot=document.createElement('div');
   top.className='half p1 turn';bot.className='half p0 turn';
   const mid=document.createElement('div');mid.className='mid';
-  const grid=document.createElement('div');grid.className='pick';mid.append(grid);
+  const box=document.createElement('div');box.className='cups';mid.append(box);
   G.root.append(top,mid,bot);const half=[bot,top];
-  const T=3,sc=[0,0];let turn=rnd(0,1),hid=0,open=false;
+  const T=5,AN=[['🐱','el gatito'],['🐶','el perrito'],['🐰','el conejo'],['🐭','el ratón'],['🐸','la rana'],['🐥','el pollito'],['🐻','el osito'],['🐢','la tortuga']];
+  const SW=[2,4,6,8][S.level],DUR=[560,440,340,270][S.level];
+  let stars=0,turn=rnd(0,1),open=false,ball=0,an=AN[0],slot=[0,1,2],msg='';
+  const cups=[0,1,2].map(i=>{
+    const b=document.createElement('button');b.className='cup';b.innerHTML='<span class="an"></span><i class="cp"></i>';
+    b.style.transitionDuration=DUR+'ms';
+    b.onpointerdown=e=>{e.preventDefault();tap(i)};box.append(b);return b;
+  });
+  const place=()=>cups.forEach((b,i)=>b.style.left=(slot[i]*35)+'%');
   function banners(){
-    mid.classList.toggle('toP1',turn===1&&!G.over);
     mid.classList.toggle('toP1',turn===1&&!G.over);
     half.forEach((d,i)=>{
       d.classList.toggle('on',turn===i&&!G.over);
-      const hint=i===0?'<div class="hint">📢 Por turnos: ¿en qué caja se esconde el gatito?</div>':'';
-      d.innerHTML=`<div class="who">${esc(G.name(i))} ${'⭐'.repeat(sc[i])+'☆'.repeat(T-sc[i])}</div><div class="big bigp">${turn===i?'👉🎁':'👀'}</div>${hint}`;
+      const hint=i===0?`<div class="hint">📢 ${msg}</div>`:'';
+      d.innerHTML=`<div class="who">${esc(G.name(i))} ${'⭐'.repeat(stars)+'☆'.repeat(T-stars)}</div><div class="big bigp">${turn===i?an[0]+'❓':'👀'}</div>${hint}`;
     });
   }
   function round(){
-    hid=rnd(0,5);grid.innerHTML='';
-    for(let k=0;k<6;k++){
-      const b=document.createElement('button');b.className='item';b.textContent='🎁';
-      b.onpointerdown=e=>{e.preventDefault();tap(k,b)};grid.append(b);
-    }
-    banners();open=true;
+    open=false;an=AN[rnd(0,AN.length-1)];ball=rnd(0,2);
+    cups.forEach(b=>b.classList.remove('lift'));
+    msg=`Miren bien debajo de cuál vaso se esconde ${an[1]}…`;banners();
+    G.after(()=>{cups.forEach((b,i)=>b.querySelector('.an').textContent=i===ball?an[0]:'');cups[ball].classList.add('lift');sfx.tap()},450);
+    G.after(()=>cups[ball].classList.remove('lift'),2100);
+    let k=0;
+    const sw=()=>{
+      if(k++>=SW){open=true;msg=`${turn===1?`Pregúntale a ${esc(G.name(1))}`:'Tu turno'}: ¿en cuál vaso está ${an[1]}?`;banners();return}
+      const a=rnd(0,2);let b;do{b=rnd(0,2)}while(b===a);
+      [slot[a],slot[b]]=[slot[b],slot[a]];place();beep(300+k*40,.08,'triangle',.1);
+      G.after(sw,DUR+110);
+    };
+    G.after(()=>{msg='¡Se mezclan! No le quiten los ojos de encima 👀';banners();sw()},2600);
   }
-  function tap(k,b){
-    if(!open||G.over||b.dataset.o)return;b.dataset.o=1;
-    if(k===hid){
-      open=false;b.textContent='🐱';b.classList.add('good');sc[turn]++;sfx.ok();banners();
-      if(sc[turn]>=T){const w=turn;G.after(()=>G.end(w),1300)}
-      else G.after(()=>{turn=1-turn;round()},1600);
-    }else{b.textContent='💨';b.classList.add('empty');sfx.tap();turn=1-turn;banners()}
+  function tap(i){
+    if(!open||G.over||cups[i].classList.contains('lift'))return;
+    cups[i].classList.add('lift');
+    if(i===ball){
+      open=false;stars++;sfx.ok();msg=`¡Ahí estaba ${an[1]}! 🎉`;banners();
+      if(stars>=T)G.after(()=>G.end('coop'),1500);
+      else G.after(()=>{turn=1-turn;round()},2000);
+    }else{sfx.bad();G.after(()=>cups[i].classList.remove('lift'),800)}
   }
-  round();
+  place();round();
 }
 
 /* ======================= AL MISMO TIEMPO (los dos juegan a la vez) ======================= */
@@ -1243,7 +1371,7 @@ function raspa(G){
   const c1=document.createElement('div'),c0=document.createElement('div');
   c1.className='cnt flip ctop';c0.className='cnt cbot';root.append(c1,c0);
   const T=5,CX=12,CY=24,RAD=34;
-  const PICS=shuffle([['🦁','un león','¿Cómo ruge el león?'],['🐘','un elefante','¿Cómo hace el elefante?'],['🐸','una rana','¿Cómo salta la rana?'],['🦒','una jirafa','¿Tiene el cuello largo o corto?'],['🐧','un pingüino','¿Cómo camina el pingüino?'],['🐙','un pulpo','¿Cuántos brazos tiene?'],['🦕','un dinosaurio','¿Cómo hace el dinosaurio?'],['🐒','un mono','¿Cómo hace el mono?']]);
+  const PICS=shuffle([['🦁','un león','¿Cómo ruge el león?'],['🐘','un elefante','¿Cómo hace el elefante?'],['🐸','una rana','¿Cómo salta la rana?'],['🦒','una jirafa','¿Tiene el cuello largo o corto?'],['🐧','un pingüino','¿Cómo camina el pingüino?'],['🐙','un pulpo','¿Cuántos brazos tiene?'],['🦕','un dinosaurio','¿Cómo hace el dinosaurio?'],['🐒','un mono','¿Cómo hace el mono?'],['🐯','un tigre','¿Cómo ruge el tigre?'],['🦓','una cebra','¿De qué color son sus rayas?'],['🐊','un cocodrilo','¿Cómo abre la boca?'],['🦜','un loro','¿Cómo habla el loro?'],['🐢','una tortuga','¿Camina rápido o despacio?'],['🦋','una mariposa','¿Cómo mueve las alas?'],['🐳','una ballena','¿Dónde vive la ballena?'],['🦉','un búho','¿Cómo hace el búho?'],['🐮','una vaca','¿Cómo hace la vaca?'],['🐴','un caballo','¿Cómo galopa el caballo?'],['🦀','un cangrejo','¿Cómo camina el cangrejo?'],['🐝','una abeja','¿Cómo zumba la abeja?'],['🦈','un tiburón','¿Cómo nada el tiburón?'],['🐰','un conejo','¿Cómo salta el conejo?']]);
   let st=0,cells=new Set(),open=false,cur,rubs=0;
   const upd=hint=>{const s='⭐'.repeat(st)+'☆'.repeat(T-st);c1.textContent=s;c0.innerHTML=`${s}<div class="hint">📢 ${hint}</div>`};
   function setup(){
@@ -1283,7 +1411,7 @@ function raspa(G){
 /* Ordena los colores (equipo): arrastren cada cosa a la caja de su color */
 function ordena(G){
   const root=G.root,field=document.createElement('div');field.className='field sortf';root.append(field);
-  const COLS=[['#e53935','ROJO',['🍎','🍓','🚒','🌶️','❤️','🍅']],['#1e88e5','AZUL',['🐳','🫐','💙','🧢','🦋','💎']],['#fdd835','AMARILLO',['🍌','🌻','⭐','🐤','🍋','🧀']]];
+  const COLS=shuffle([['#e53935','ROJO',['🍎','🍓','🚒','🌶️','❤️','🍅']],['#1e88e5','AZUL',['🐳','🫐','💙','🧢','🦋','💎']],['#fdd835','AMARILLO',['🍌','🌻','⭐','🐤','🍋','🧀']],['#43a047','VERDE',['🐸','🥦','🍏','🌵','🐢','🥒']],['#fb8c00','NARANJA',['🍊','🥕','🏀','🎃','🦊','🧡']]]).slice(0,3);
   const boxes=document.createElement('div');boxes.className='boxes';field.append(boxes);
   const bx=COLS.map(([col])=>{const b=document.createElement('div');b.className='box';b.style.background=col;boxes.append(b);return b});
   const c1=document.createElement('div'),c0=document.createElement('div');
@@ -1333,15 +1461,15 @@ function ordena(G){
 /* ======================= MENÚ ======================= */
 const GAMES=[
   {sec:'🧸 Aprender juntos · nadie pierde'},
-  {icon:'🐶',title:'Busca el animal',desc:'Animales y sus sonidos',run:quiz(SETS.animales)},
+  {icon:'🐶',title:'Busca el animal',desc:'24 animales y sus sonidos',run:quiz(SETS.animales)},
   {icon:'🎨',title:'Busca el color',desc:'Rojo, azul, verde…',run:quiz(SETS.colores)},
-  {icon:'🔺',title:'Formas',desc:'Círculo, cuadrado, estrella',run:quiz(SETS.formas)},
+  {icon:'🔺',title:'Formas',desc:'13 formas: luna, óvalo, flecha…',run:quiz(SETS.formas)},
   {icon:'👤',title:'Sombras',desc:'¿De quién es la sombra?',run:quiz(SETS.sombras)},
   {icon:'🐘',title:'Grande y pequeño',desc:'Comparar tamaños',run:quiz(SETS.tamanos)},
   {icon:'🥕',title:'¿Qué come?',desc:'Cada animal y su comida',run:quiz(SETS.comida)},
   {icon:'🍌',title:'¿De qué color es?',desc:'El banano es amarillo',run:quiz(SETS.colorde)},
   {icon:'🍓',title:'Busca la fruta',desc:'¿Dónde está la fresa?',run:quiz(SETS.frutas)},
-  {icon:'🔢',title:'Cuenta conmigo',desc:'¿Cuántas manzanas?',run:quiz(SETS.numeros)},
+  {icon:'🔢',title:'Cuenta conmigo',desc:'Del 1 al 10',run:quiz(SETS.numeros)},
   {icon:'🦖',title:'Alimenta al dino',desc:'Contar en voz alta',run:dino},
   {icon:'🅰️',title:'Vocales',desc:'A de abeja',run:quiz(SETS.vocales)},
   {icon:'😀',title:'Emociones',desc:'Feliz, triste, enojado',run:quiz(SETS.emociones)},
@@ -1357,11 +1485,11 @@ const GAMES=[
   {icon:'🫧',title:'Burbujas',desc:'Revienten 20 juntos',run:G=>burbujas(G,false)},
   {icon:'🎈',title:'Globos de colores',desc:'Solo el color pedido',run:G=>burbujas(G,true)},
   {icon:'🖍️',title:'Pintar juntos',desc:'Dibujen con el dedo',run:pintar},
-  {icon:'🎹',title:'Piano',desc:'Hagan música',run:piano},
+  {icon:'🎹',title:'Piano',desc:'Libre o aprende 6 canciones',run:piano},
+  {icon:'🥤',title:'Vasos mágicos',desc:'¿Dónde se escondió?',run:vasos},
   {sec:'🎲 De suerte · cualquiera gana'},
   {icon:'🎲',title:'Carrera de dados',desc:'Tira y cuenta los pasos',run:dados},
-  {icon:'🎁',title:'Escondite',desc:'¿Dónde está el gatito?',run:escondite},
-  {icon:'🧠',title:'Memoria',desc:'Nivel Peque: 8 cartas',run:mem},
+  {icon:'🧠',title:'Memoria',desc:'6 niveles: de 6 a 24 cartas',run:mem},
   {sec:'🐾 Atrapa y gana · papá vs {k}'},
   {icon:'🦛',title:'Hipopótamos hambrientos',desc:'Atrapa más comida',run:hipos},
   {icon:'🐹',title:'Atrapa topos',desc:'30 segundos, ¡rápido!',run:topos},
@@ -1396,7 +1524,16 @@ $('#sSide').onclick=()=>{S.seat='side';save();refresh()};$('#sFace').onclick=()=
   $('#'+id).addEventListener('blur',e=>{if(!e.target.value.trim()){S.names[i]=i?KID().name:'Papá';refresh()}});
 });
 $('#snd').onclick=()=>{S.sound=!S.sound;save();refresh()};
-$('#rst').onclick=()=>{S.score=[0,0];S.medals=0;save();refresh()};
+let rstT;
+$('#rst').onclick=()=>{
+  const b=$('#rst');
+  if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='¿Seguro? Toca otra vez';rstT=setTimeout(()=>{b.classList.remove('armed');refresh()},3000);return}
+  clearTimeout(rstT);b.classList.remove('armed');S.score=[0,0];S.medals=0;save();refresh();
+};
+const openSet=v=>{$('#settings').hidden=!v};
+$('#gear').onclick=$('#sum').onclick=()=>openSet(true);
+$('#sclose').onclick=$('#sdone').onclick=()=>openSet(false);
+$('#settings').addEventListener('click',e=>{if(e.target.id==='settings')openSet(false)});
 const bk=$('#back');let armT;
 const disarm=()=>{clearTimeout(armT);bk.classList.remove('armed');bk.textContent='✕'};
 bk.addEventListener('click',e=>{
@@ -1411,7 +1548,7 @@ function refresh(){
   $('#s0').textContent=S.score[0];$('#s1').textContent=S.score[1];
   [...lvlBox.children].forEach((b,i)=>b.classList.toggle('on',S.level===i));
   const K=KID();
-  $('#edge').textContent=(S.edge?'✅':'⬜')+' Ventaja para '+K.peque;
+  $('#edge').textContent=(S.edge?'✅ Activada':'⬜ Desactivada')+' · ventaja para '+K.peque;
   $('#ttl').textContent=`${K.emoji} Papá & ${K.name}`;document.title=`Papá e ${K.name} · Juegos`;
   $('#kHija').classList.toggle('on',S.kid!=='hijo');$('#kHijo').classList.toggle('on',S.kid==='hijo');
   $('#sSide').classList.toggle('on',S.seat!=='face');$('#sFace').classList.toggle('on',S.seat==='face');
@@ -1419,8 +1556,10 @@ function refresh(){
   document.body.classList.toggle('hijo',S.kid==='hijo');
   const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content='#1b1f3a';
   grid.querySelectorAll('h2.sec').forEach(h=>h.textContent=h.dataset.t.replace('{k}',K.w));
-  $('#snd').textContent=S.sound?'🔊 Sonido':'🔇 Sonido';
+  $('#snd').textContent=S.sound?'🔊 Activado':'🔇 Apagado';
   $('#med').textContent='🏅 Juegos ganados juntos: '+(S.medals||0);
+  if(!$('#rst').classList.contains('armed'))$('#rst').textContent='↺ Reiniciar marcador y medallas';
+  $('#sum').textContent=[S.kid==='hijo'?'👦 Hijo':'👧 Hija',S.seat==='face'?'↕️ Frente a frente':'👨‍👧 Juntos',['Peque','Fácil','Medio','Difícil'][S.level],S.edge?'✅ Ventaja':'',S.sound?'🔊':'🔇'].filter(Boolean).join(' · ')+'  ⚙️';
 }
 refresh();
 

@@ -4,16 +4,16 @@ Minijuegos para dos en un mismo celular o tablet. Sin anuncios, sin internet, si
 
 **Aprender juntos (nadie pierde):** Busca el animal · Busca el color · Formas · Sombras · Grande y pequeño · ¿Qué come? · ¿De qué color es? · Busca la fruta · Cuenta conmigo · Alimenta al dino · Vocales · Emociones · Camino.
 
-**Jugar juntos:** Burbujas · Globos de colores · Pintar juntos · Piano.
+**Jugar juntos:** Burbujas · Globos de colores · Pintar juntos · Piano (libre o canciones guiadas tecla a tecla) · Vasos mágicos.
 
-**De suerte (cualquiera gana):** Carrera de dados · Escondite · Memoria.
+**De suerte (cualquiera gana):** Carrera de dados · Memoria (6 niveles, de 6 a 24 cartas).
 
 **Atrapa y gana:** Hipopótamos hambrientos · Atrapa topos · Atrapa estrellas · Pesca · Tira y afloja.
 
 **Para cuando crezca:** Reflejos · Pong · Duelo de mates · Triqui · Piedra, papel o tijera.
 
-Nivel "Peque": 3 opciones por pregunta, contar hasta 3 y memoria de 8 cartas.
-Para salir de un juego se mantiene presionada la ✕.
+Nivel "Peque": 3 opciones por pregunta y contar hasta 3. Los niveles altos suben los números (hasta 10) y la velocidad de los vasos.
+Para salir de un juego se toca la ✕ dos veces.
 
 El jugador de abajo es el 1 (azul) y el de arriba el 2 (rosa, pantalla girada hacia él).
 El marcador y los nombres se guardan en el dispositivo.
